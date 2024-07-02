@@ -6,6 +6,8 @@ import sys
 import re
 # Para ordenar la lista Ingredients bajo 2 criterios simultaneos (el tipo y el timing)
 import operator
+# Para dibujar las tablas
+import tabulate
 
 class Beer():
     def __init__(self, name = None, beer_type = None) -> None:
@@ -51,7 +53,7 @@ class Beer():
                     "6. Dry Hopping": "During fermentation, before bottling"}
         done = False
         while not done:
-            ing_info = ["", "", "", []]
+            ing_info = ["", "", "", ""]
             while not self.name:
                 self.name = input("Name of the beer: ").capitalize()
                 right_name = re.search(f"^[a-zA-Z0-9 '-ºª]*$", self.name)
@@ -118,14 +120,7 @@ class Beer():
                     valid_quantity = True
                 except ValueError as e:
                     print(e)
-
-            if ing_info[0] == "Malt":
-                print("\nWhen to add:\n1. Before boil\n2. During boil")
-                while not ing_info[3]:
-                    choice = input("\nPlease choose an option (1-2): ")
-                    if choice in ["1", "2"]:
-                        ing_info[3] = "Before boil" if choice == "1" else "During boil"
-
+            
             if ing_info[0] == "Hops":
                 print("\nWhen to add:\n")
                 for _ in timings:
@@ -133,10 +128,21 @@ class Beer():
                 while not ing_info[3]:
                     choice = input("\nPlease choose an option (1-6): ")
                     if choice in ["1", "2", "3", "4", "5", "6"]:
-                        ing_info[3] = timings[choice]
+                        ing_info[3] = list(timings.values())[int(choice) - 1]
                     else:
                         print("Please, choose an option within the given")
 
+
+            if ing_info[0] == "Malt":
+                print("\nWhen to add:\n1. Before boil\n2. During boil")
+                while not ing_info[3]:
+                    choice = input("\nPlease choose an option (1-2): ")
+                    if choice in ["1", "2"]:
+                        ing_info[3] = "Before boil" if choice == "1" else "During boil"
+            
+            if ing_info[0] == "Yiest":
+                ing_info[3] == "After cooling the mixture"
+            
             ingredients.append(ing_info)
             a = ""
             checker = input("\nDo you want to add another one? Y or N: ")
@@ -147,7 +153,7 @@ class Beer():
         ingredients.sort(key = operator.itemgetter(0, 3, 1))
         
         # Imprime todo seguido, incluidos los elementos vacios, en forma de lista 
-        print(ingredients)
+        print(tabulate(ingredients, headers = ["Ingredient", "Variety", "Quantity", "When to be added"], tablefmt = "fancy_grid"))
 
 
     # def show_recipe(self, ingredients):
