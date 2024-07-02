@@ -7,7 +7,7 @@ import re
 # Para ordenar la lista Ingredients bajo 2 criterios simultaneos (el tipo y el timing)
 import operator
 # Para dibujar las tablas
-import tabulate
+from tabulate import tabulate
 
 class Beer():
     def __init__(self, name = None, beer_type = None) -> None:
@@ -94,7 +94,7 @@ class Beer():
             while ing_info[0] not in possible_ing:
                 if fail:
                     print("Please, introduce a proper ingredient from the list below.")
-                ing_info[0] = input("Ingredient (Malt, Yiest or Hops): ").capitalize()
+                ing_info[0] = input("Ingredient (Hops, Malt or Yiest): ").capitalize()
                 if ing_info[0] not in possible_ing:
                     fail = True
 
@@ -106,17 +106,17 @@ class Beer():
             while not valid_quantity:
                 try:
                     if fail == True:
-                        print("Incorrect quantity. You have to provide a number and a measure (e.g. 1 Kg, 20 g, 700 mg). Try again.")
-                    ing_info[2] = input("Quantity (please, specify in mg, g or Kg): ")
+                        print("Incorrect quantity. You have to provide a number and a measure (e.g. 1 Kg, 20 g). Try again.")
+                    ing_info[2] = input("Quantity (please, specify in g or kg): ").lower()
                     
                     # Me divide el input en 2 y acto seguido mira si hay errores en las entradas
-                    match = re.search("^(\d*)? (mg|g|gr|kg|Kg|KG)?$", ing_info[2])
+                    match = re.search("^(\d*)? (g|gr|kg|Kg|KG)?$", ing_info[2])
                     if not match:
-                        raise ValueError("Incorrect quantity. You have to provide a number and a measure (e.g. 1 Kg, 20 g, 700 mg). Try again.")
+                        raise ValueError("Incorrect quantity. You have to provide a number and a measure (e.g. 1 Kg, 20 g). Try again.")
                     if not match.group(1).isnumeric():
                         raise ValueError("Quantity must be a number.")
-                    if match.group(2) not in ["mg", "g", "gr", "kg", "Kg", "KG"]:
-                        raise ValueError("Invalid measure. Choose from mg, g, gr, kg, Kg, KG.")
+                    if match.group(2) not in ["g", "gr", "kg", "Kg", "KG"]:
+                        raise ValueError("Invalid measure. Choose from g, gr, kg, Kg, KG.")
                     valid_quantity = True
                 except ValueError as e:
                     print(e)
@@ -141,7 +141,7 @@ class Beer():
                         ing_info[3] = "Before boil" if choice == "1" else "During boil"
             
             if ing_info[0] == "Yiest":
-                ing_info[3] == "After cooling the mixture"
+                ing_info[3] = "After cooling the mixture"
             
             ingredients.append(ing_info)
             a = ""
@@ -150,13 +150,17 @@ class Beer():
                 done = True
 
         # Ahora ordeno la lista de ingredientes. 1º por ingredientes, y dentro de los ingredientes, por tiempos y cantidad (en ese orden).
-        ingredients.sort(key = operator.itemgetter(0, 3, 1))
+        ingredients.sort(key = operator.itemgetter(0, 3, 2))
+        return ingredients
         
-        # Imprime todo seguido, incluidos los elementos vacios, en forma de lista 
-        print(tabulate(ingredients, headers = ["Ingredient", "Variety", "Quantity", "When to be added"], tablefmt = "fancy_grid"))
-
-
-    # def show_recipe(self, ingredients):
+        
+        
+    # Imprime una tabla de los ingredientes añadidos por el usuario 
+    def show_recipe(self, ing_list):
+        os.system('cls||clear')
+        print("--------- Brewing recipe ---------\n\n")
+        print(f"For brewing a {self.name} ({self.beer_type} type of beer), you will need:\n")
+        print(tabulate(ing_list, headers = ["Ingredient", "Variety", "Quantity", "When to be added"], tablefmt = "fancy_grid"))
 
 
 
@@ -165,7 +169,8 @@ class Beer():
 def main():
     os.system('cls||clear')
     beer = Beer()
-    beer.ingredients()
+    users_recipe = beer.ingredients()
+    beer.show_recipe(users_recipe)
     print(beer)
     print(beer.name)
 
