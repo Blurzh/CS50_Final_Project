@@ -7,7 +7,6 @@ import re
 # Para ordenar la lista Ingredients bajo 2 criterios simultaneos (el tipo y el timing)
 import operator
 
-
 class Beer():
     def __init__(self, name = None, beer_type = None) -> None:
         self._name = name
@@ -25,8 +24,6 @@ class Beer():
     
     @name.setter
     def name(self, value):
-        if not value.isalpha():
-            raise ValueError("Let's keep it simple! Instead of a number, let's name it with words.")
         self._name = value
 
 
@@ -38,23 +35,14 @@ class Beer():
 
     @beer_type.setter
     def beer_type(self, value):
-        try:
-            if not value.isalpha():
-                raise ValueError
-            self._beer_type = value
-        except ValueError:
-
-            # Quiza podria hacer que no salga del programa, si no que entre en bucle hasta que le meta un str. Por ahora se queda así
-
-            sys.exit("Beer types aren't numbers.")
+        self._beer_type = value
 
     
     def ingredients(self):
         os.system('cls||clear')
         possible_ing = ["Malt", "Yiest", "Hops"]
-        print("--------- Introducing ingredients ---------")
+        print("--------- Introducing ingredients ---------\n\n")
         ingredients = []
-        ing_info = ["", "", "", []]
         timings = {"1. Early Boil": "First 15 minutes",
                     "2. Mid Boil": "Middle of the boil",
                     "3. Late Boil": "Last 10-15 minutes",
@@ -63,10 +51,33 @@ class Beer():
                     "6. Dry Hopping": "During fermentation, before bottling"}
         done = False
         while not done:
-            if not self.name:
-                self.name = input("\n\nName of the beer: ").capitalize()
-            if not self.beer_type:    
+            ing_info = ["", "", "", []]
+            while not self.name:
+                self.name = input("Name of the beer: ").capitalize()
+                right_name = re.search(f"^[a-zA-Z0-9 '-ºª]*$", self.name)
+                try:
+                    if not right_name:
+                        raise ValueError("Invalid name. Try a different one.")
+                except ValueError as e:
+                    os.system('cls||clear')
+                    print("--------- Introducing ingredients ---------\n\n")
+                    print(e)
+                    self.name = None
+            
+
+            while not self.beer_type:
                 self.beer_type = input("Type of the beer: ").capitalize()
+                right_name = re.search(f"^[a-zA-Z' -]*$", self.beer_type)
+                try:
+                    if not right_name:
+                        raise ValueError("\nInvalid name. Try a different one.")
+                except ValueError as e:
+                    os.system('cls||clear')
+                    print("--------- Introducing ingredients ---------\n\n")
+                    print(f"Name of the beer: {self.name}")
+                    print(e)
+                    self.beer_type = None
+                    
             
             
             os.system('cls||clear')
@@ -143,7 +154,7 @@ class Beer():
 
 
 
-    
+
 
 def main():
     os.system('cls||clear')
