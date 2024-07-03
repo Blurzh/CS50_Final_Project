@@ -165,11 +165,11 @@ class Beer():
     
     
     # Imprime una tabla de los ingredientes añadidos por el usuario 
-    def show_recipe(self, ing_list):
-        os.system('cls||clear')
+    def show_recipe(self, ingredients):
+        #os.system('cls||clear')
         print("--------- Brewing recipe ---------\n\n")
         print(f"For brewing a {self.name} ({self.beer_type} type of beer), you will need:\n")
-        print(tabulate(ing_list, headers = "firstrow", tablefmt = "fancy_grid"))
+        print(tabulate(ingredients, headers = "firstrow", tablefmt = "fancy_grid"))
 
 
 def create_recipe_csv(beer, ingredients):
@@ -180,12 +180,24 @@ def create_recipe_csv(beer, ingredients):
             writer.writerow(_)
 
 
+def open_recipe(option):
+    with open(option) as file:
+        recipe_to_open = file.readlines()
+    aux_dict = []
+    for _ in range(len(recipe_to_open)):
+        aux_dict.append(recipe_to_open[_].split(sep=','))
+    return aux_dict
+
+
 def main():
     os.system('cls||clear')
     beer = Beer()
     users_recipe = beer.ingredients()
-    # beer.show_recipe(users_recipe)
+    beer.show_recipe(users_recipe)
     create_recipe_csv(beer, users_recipe)
+    recipe = open_recipe("Asdf (Asdf)")
+    beer.show_recipe(recipe)
+
 
 if __name__ == "__main__":
     main()
