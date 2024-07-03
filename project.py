@@ -48,7 +48,7 @@ class Beer():
 
     
     def ingredients(self):
-        os.system('cls||clear')
+        #os.system('cls||clear')
         possible_ing = ["Malt", "Yiest", "Hops"]
         print("--------- Introducing ingredients ---------\n\n")
         ingredients = []
@@ -86,17 +86,15 @@ class Beer():
                     print(f"Name of the beer: {self.name}")
                     print(e)
                     self.beer_type = None
-                    
+
             
-            
-            os.system('cls||clear')
+            #os.system('cls||clear')
             print("--------- Introducing ingredients ---------")
             print(f"\n\nName of the beer: {self.name}")
             print(f"Type of the beer: {self.beer_type}")
             print(f"\nYou're now introducing the ingredients for brewing a {self.beer_type}, specificaly, a {self.name}. Please, follow the instructions for a clearer recipe.")
-            print(f"\nYou'll be asked to introduce either {possible_ing[0]}, {possible_ing[1]}, or {possible_ing[2]}, plus their names, quantities and when they're supposed to be added.")    
-            
-            print("\n")
+            print(f"\nYou'll be asked to introduce either {possible_ing[0]}, {possible_ing[1]}, or {possible_ing[2]}, plus their names, quantities and when they're supposed to be added.\n")    
+
             fail = False
             while ing_info[0] not in possible_ing:
                 if fail:
@@ -116,7 +114,6 @@ class Beer():
                         print("Incorrect quantity. You have to provide a number and a measure (e.g. 1 Kg, 20 g). Try again.")
                     ing_info[2] = input("Quantity (please, specify in g or kg): ").lower()
                     
-                    # Me divide el input en 2 y acto seguido mira si hay errores en las entradas
                     match = re.search("^(\d*)? (g|gr|kg|Kg)?$", ing_info[2])
                     if not match:
                         raise ValueError("Incorrect quantity. You have to provide a number and a measure (e.g. 1 Kg, 20 g). Try again.")
@@ -139,7 +136,6 @@ class Beer():
                     else:
                         print("Please, choose an option within the given")
 
-
             if ing_info[0] == "Malt":
                 print("\nWhen to add:\n1. Before boil\n2. During boil")
                 while not ing_info[3]:
@@ -149,7 +145,7 @@ class Beer():
             
             if ing_info[0] == "Yiest":
                 ing_info[3] = "After cooling the mixture"
-            
+
             ingredients.append(ing_info)
             a = ""
             checker = input("\nDo you want to add another one? Y or N: ")
@@ -162,21 +158,25 @@ class Beer():
         for _ in range(len(ingredients)):
             sorted_ingredients.append(ingredients[_])
         return sorted_ingredients
-    
-    
-    # Imprime una tabla de los ingredientes añadidos por el usuario 
+
+
     def show_recipe(self, ingredients):
-        #os.system('cls||clear')
+        os.system('cls||clear')
         print("--------- Brewing recipe ---------\n\n")
         print(f"For brewing a {self.name} ({self.beer_type} type of beer), you will need:\n")
         print(tabulate(ingredients, headers = "firstrow", tablefmt = "fancy_grid"))
 
 
-def create_recipe_csv(beer, ingredients):
-    recipe_name = beer.name + " (" + beer.beer_type + ")"
+# Tengo que tener cuidado con esta funcion. Recibe una beer con nombre y tipo, y con ello tiene que hacer un .csv
+def create_recipe_csv(beer):
+    recipe_name = beer.name + " (" + beer.beer_type + ").csv"
     with open(recipe_name, 'w') as new_recipe:
         writer = csv.writer(new_recipe)
-        for _ in ingredients:
+        print(type(beer.ingredients))
+        # problema. Sorted_list se convierte en una list porque el metodo .ingredients vuelve a ser llamado
+        sorted_list = list(beer.ingredients)
+        print(type(sorted_list))
+        for _ in sorted_list:
             writer.writerow(_)
 
 
@@ -189,15 +189,45 @@ def open_recipe(option):
     return aux_dict
 
 
+# Esta función va a ser problematica ya que tiene el path de mi carpeta del pc, no la del repositorio de GitHub en si
+def show_all_csv_available():
+    all_files = os.listdir("/home/sergio/Projects/CS50_Final_Project")    
+    csv_files = list(filter(lambda f: f.endswith('.csv'), all_files))
+    print("\nExisting recipes:\n")
+    for _ in csv_files:
+        print(_)
+
+# Esta función necesita ser pulida mucho mucho mas
+def menu():
+    beer = Beer()
+    option = -1
+    while option != "0":
+        # Puedo hacer un menu mas bonito con Tabulate (no sé, piénsalo)
+        option = input("--------- Menu ---------\n\nOptions:\n\n1.- Create recipe\n2.- Save Recipe\n3.- See existing recipes\n4.- See recipe's ingredients\n5.- Follow recipe\n0.- Exit program\n\nOption: ")
+        if option == "1":
+            beer = Beer()
+            beer.ingredients()
+        elif option == "2":
+            if beer:
+                create_recipe_csv(beer)
+            else:
+                print("You can't save a recipe if you don't enter one first")
+        elif option == "3":
+            show_all_csv_available()
+        elif option == "4":
+            # Muestra las recetas existentes, selecionas una y te la muestra
+            beer.show_recipe(recipe)
+        #elif option == "5":
+            # Aqui viene una funcion aun por definir ("follow_recipe")
+
+
+
+
+
 def main():
     os.system('cls||clear')
     beer = Beer()
-    users_recipe = beer.ingredients()
-    beer.show_recipe(users_recipe)
-    create_recipe_csv(beer, users_recipe)
-    recipe = open_recipe("Asdf (Asdf)")
-    beer.show_recipe(recipe)
-
+    menu()
 
 if __name__ == "__main__":
     main()
