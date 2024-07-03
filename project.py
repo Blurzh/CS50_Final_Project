@@ -4,8 +4,6 @@ import os
 import sys
 # Para cazar los grupos cuando el usuario mete las cantidades
 import re
-# Para ordenar la lista Ingredients bajo 2 criterios simultaneos (el tipo y el timing)
-import operator
 # Para dibujar las tablas
 from tabulate import tabulate
 # Para abrir, modificar y guardar archivos csv
@@ -53,7 +51,7 @@ class Beer():
         os.system('cls||clear')
         possible_ing = ["Malt", "Yiest", "Hops"]
         print("--------- Introducing ingredients ---------\n\n")
-        ingredients = [["Ingredient", "Variety", "Quantity", "When to be added"]]
+        ingredients = []
         timings = {"1. Early Boil": "First 15 minutes",
                     "2. Mid Boil": "Middle of the boil",
                     "3. Late Boil": "Last 10-15 minutes",
@@ -160,8 +158,10 @@ class Beer():
 
         # Ahora ordeno la lista de ingredientes. 1º por ingredientes, y dentro de los ingredientes, por tiempos y cantidad (en ese orden).
         ingredients.sort(key = lambda x: (x[0], x[3], sorting_quantity(x)))
-        return ingredients
-    
+        sorted_ingredients = [["Ingredient", "Variety", "Quantity", "When to be added"]]
+        for _ in range(len(ingredients)):
+            sorted_ingredients.append(ingredients[_])
+        return sorted_ingredients
     
     
     # Imprime una tabla de los ingredientes añadidos por el usuario 
@@ -173,18 +173,19 @@ class Beer():
 
 
 def create_recipe_csv(beer, ingredients):
-    recipe_name = beer.name + "(" + beer.beer_type + ")"
+    recipe_name = beer.name + " (" + beer.beer_type + ")"
     with open(recipe_name, 'w') as new_recipe:
         writer = csv.writer(new_recipe)
-        for row in ingredients:
-            writer.writerow(row)    
+        for _ in ingredients:
+            writer.writerow(_)
 
 
 def main():
     os.system('cls||clear')
     beer = Beer()
     users_recipe = beer.ingredients()
-    beer.show_recipe(users_recipe)
+    # beer.show_recipe(users_recipe)
+    create_recipe_csv(beer, users_recipe)
 
 if __name__ == "__main__":
     main()
