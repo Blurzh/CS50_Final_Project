@@ -8,6 +8,8 @@ import re
 import operator
 # Para dibujar las tablas
 from tabulate import tabulate
+# Para abrir, modificar y guardar archivos csv
+import csv
 
 
 def sorting_quantity(item):
@@ -42,21 +44,16 @@ class Beer():
     def beer_type(self):
         return self._beer_type
 
-    #   Tengo que hace que el tipo de birra permita espacios
-
     @beer_type.setter
     def beer_type(self, value):
         self._beer_type = value
-
-
-    
 
     
     def ingredients(self):
         os.system('cls||clear')
         possible_ing = ["Malt", "Yiest", "Hops"]
         print("--------- Introducing ingredients ---------\n\n")
-        ingredients = []
+        ingredients = [["Ingredient", "Variety", "Quantity", "When to be added"]]
         timings = {"1. Early Boil": "First 15 minutes",
                     "2. Mid Boil": "Middle of the boil",
                     "3. Late Boil": "Last 10-15 minutes",
@@ -172,10 +169,15 @@ class Beer():
         os.system('cls||clear')
         print("--------- Brewing recipe ---------\n\n")
         print(f"For brewing a {self.name} ({self.beer_type} type of beer), you will need:\n")
-        print(tabulate(ing_list, headers = ["Ingredient", "Variety", "Quantity", "When to be added"], tablefmt = "fancy_grid"))
+        print(tabulate(ing_list, headers = "firstrow", tablefmt = "fancy_grid"))
 
 
-
+def create_recipe_csv(beer, ingredients):
+    recipe_name = beer.name + "(" + beer.beer_type + ")"
+    with open(recipe_name, 'w') as new_recipe:
+        writer = csv.writer(new_recipe)
+        for row in ingredients:
+            writer.writerow(row)    
 
 
 def main():
