@@ -9,6 +9,15 @@ import operator
 # Para dibujar las tablas
 from tabulate import tabulate
 
+
+def sorting_quantity(item):
+        quantity = item[2]
+        num, measure = quantity.split()
+        num = float(num)
+        if measure.lower() == "kg":
+            num *= 1000
+        return num
+
 class Beer():
     def __init__(self, name = None, beer_type = None) -> None:
         self._name = name
@@ -38,6 +47,9 @@ class Beer():
     @beer_type.setter
     def beer_type(self, value):
         self._beer_type = value
+
+
+    
 
     
     def ingredients(self):
@@ -110,13 +122,13 @@ class Beer():
                     ing_info[2] = input("Quantity (please, specify in g or kg): ").lower()
                     
                     # Me divide el input en 2 y acto seguido mira si hay errores en las entradas
-                    match = re.search("^(\d*)? (g|gr|kg|Kg|KG)?$", ing_info[2])
+                    match = re.search("^(\d*)? (g|gr|kg|Kg)?$", ing_info[2])
                     if not match:
                         raise ValueError("Incorrect quantity. You have to provide a number and a measure (e.g. 1 Kg, 20 g). Try again.")
                     if not match.group(1).isnumeric():
                         raise ValueError("Quantity must be a number.")
                     if match.group(2) not in ["g", "gr", "kg", "Kg", "KG"]:
-                        raise ValueError("Invalid measure. Choose from g, gr, kg, Kg, KG.")
+                        raise ValueError("Invalid measure. Choose from g, gr, kg, Kg.")
                     valid_quantity = True
                 except ValueError as e:
                     print(e)
@@ -150,11 +162,11 @@ class Beer():
                 done = True
 
         # Ahora ordeno la lista de ingredientes. 1º por ingredientes, y dentro de los ingredientes, por tiempos y cantidad (en ese orden).
-        ingredients.sort(key = operator.itemgetter(0, 3, 2))
+        ingredients.sort(key = lambda x: (x[0], x[3], sorting_quantity(x)))
         return ingredients
-        
-        
-        
+    
+    
+    
     # Imprime una tabla de los ingredientes añadidos por el usuario 
     def show_recipe(self, ing_list):
         os.system('cls||clear')
@@ -171,8 +183,6 @@ def main():
     beer = Beer()
     users_recipe = beer.ingredients()
     beer.show_recipe(users_recipe)
-    print(beer)
-    print(beer.name)
 
 if __name__ == "__main__":
     main()
