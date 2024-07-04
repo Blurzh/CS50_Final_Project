@@ -162,7 +162,7 @@ class Beer():
 
 def show_recipe(ingredients, name_and_type):
     os.system('cls||clear')
-    name, beer_type = name_and_type[:-1].split(sep=' (')
+    name, beer_type = name_and_type[:-5].split(sep=' (')
     print("--------- Brewing recipe ---------\n\n")
     print(f"For brewing a {name} ({beer_type} type of beer), you will need:\n")
     print(tabulate(ingredients, headers = "firstrow", tablefmt = "fancy_grid"))
@@ -176,9 +176,6 @@ def save_recipe_csv(beer, list_to_save):
         return "\nImpossible to create the recipe, since none was entered. If you want to save one, please, select option '1.- Create Recipe'"
     with open(recipe_name, 'w') as new_recipe:
         writer = csv.writer(new_recipe)
-        print(type(beer.ingredients))
-        # problema. Sorted_list se convierte en una list porque el metodo .ingredients vuelve a ser llamado
-        print(type(list_to_save))
         for _ in list_to_save:
             writer.writerow(_)
 
@@ -208,7 +205,10 @@ def choosing_recipe():
         saved_recipes[_] = csv_files[_]
         print(f"{_+1}.- {saved_recipes[_][:-4]}")
     option = input("Which beer would you like to check? ")
-    option = saved_recipes[int(option)-1]
+    try:
+        option = saved_recipes[int(option)-1]
+    except KeyError:
+        option = "That's not an available recipe. Please, select a new option"
     return option
 
 # Esta función necesita ser pulida mucho mucho mas
@@ -218,7 +218,8 @@ def menu():
     while option != "0":
         # Puedo hacer un menu mas bonito con Tabulate (no sé, piénsalo)
         if fail:
-            option = input("--------- Menu ---------\n\nOptions:\n\n1.- Create recipe\n2.- Save Recipe\n3.- See existing recipes\n4.- See recipe's ingredients\n5.- Follow recipe\n0.- Exit program\n\n" + fail +"\nOption: ")
+            option = input("--------- Menu ---------\n\nOptions:\n\n1.- Create recipe\n2.- Save Recipe\n3.- See existing recipes\n4.- See recipe's ingredients\n5.- Follow recipe\n0.- Exit program\n\n" + fail +"\n\nOption: ")
+            fail = ""
         else:
             option = input("--------- Menu ---------\n\nOptions:\n\n1.- Create recipe\n2.- Save Recipe\n3.- See existing recipes\n4.- See recipe's ingredients\n5.- Follow recipe\n0.- Exit program\n\nOption: ")
         if option == "1":
@@ -228,15 +229,16 @@ def menu():
             try:
                 save_recipe_csv(beer, list_to_save)
             except:
-                fail = "\nImpossible to create the recipe, since none was entered. If you want to save one, please, select option '1.- Create Recipe'\n"
+                fail = "Impossible to create the recipe, since none was entered. If you want to save one, please, select option '1.- Create Recipe'"
         elif option == "3":
             show_all_csv_available()
         elif option == "4":
-            # Muestra las recetas existentes, selecionas una y te la muestra
-            # Muestra un dict con con las recetas.
             name = choosing_recipe()
-            ingredients = open_recipe(name)
-            show_recipe(ingredients, name)
+            if name == "That's not an available recipe. Please, select a new option":
+                fail = name
+            else:
+                ingredients = open_recipe(name)
+                show_recipe(ingredients, name)
         #elif option == "5":
             # Aqui viene una funcion aun por definir ("follow_recipe")
 
