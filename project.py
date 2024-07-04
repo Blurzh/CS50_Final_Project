@@ -168,8 +168,11 @@ class Beer():
 
 
 # Tengo que tener cuidado con esta funcion. Recibe una beer con nombre y tipo, y con ello tiene que hacer un .csv
-def create_recipe_csv(beer):
-    recipe_name = beer.name + " (" + beer.beer_type + ").csv"
+def save_recipe_csv(beer):
+    try:
+        recipe_name = beer.name + " (" + beer.beer_type + ").csv"
+    except TypeError:
+        return "\nImpossible to create the recipe, since none was entered. If you want to save one, please, select option '1.- Create Recipe'"
     with open(recipe_name, 'w') as new_recipe:
         writer = csv.writer(new_recipe)
         print(type(beer.ingredients))
@@ -199,24 +202,27 @@ def show_all_csv_available():
 
 # Esta función necesita ser pulida mucho mucho mas
 def menu():
-    beer = Beer()
     option = -1
+    fail = ""
     while option != "0":
         # Puedo hacer un menu mas bonito con Tabulate (no sé, piénsalo)
-        option = input("--------- Menu ---------\n\nOptions:\n\n1.- Create recipe\n2.- Save Recipe\n3.- See existing recipes\n4.- See recipe's ingredients\n5.- Follow recipe\n0.- Exit program\n\nOption: ")
+        if fail:
+            option = input("--------- Menu ---------\n\nOptions:\n\n1.- Create recipe\n2.- Save Recipe\n3.- See existing recipes\n4.- See recipe's ingredients\n5.- Follow recipe\n0.- Exit program\n\n" + fail +"\nOption: ")
+        else:
+            option = input("--------- Menu ---------\n\nOptions:\n\n1.- Create recipe\n2.- Save Recipe\n3.- See existing recipes\n4.- See recipe's ingredients\n5.- Follow recipe\n0.- Exit program\n\nOption: ")
         if option == "1":
             beer = Beer()
             beer.ingredients()
         elif option == "2":
-            if beer:
-                create_recipe_csv(beer)
-            else:
-                print("You can't save a recipe if you don't enter one first")
+            try:
+                save_recipe_csv(beer)
+            except:
+                fail = "\nImpossible to create the recipe, since none was entered. If you want to save one, please, select option '1.- Create Recipe'\n"
         elif option == "3":
             show_all_csv_available()
         elif option == "4":
             # Muestra las recetas existentes, selecionas una y te la muestra
-            beer.show_recipe(recipe)
+            beer.show_recipe("-----------tengo que pasar una lista de ingredientes--------------")
         #elif option == "5":
             # Aqui viene una funcion aun por definir ("follow_recipe")
 
@@ -226,7 +232,6 @@ def menu():
 
 def main():
     os.system('cls||clear')
-    beer = Beer()
     menu()
 
 if __name__ == "__main__":
