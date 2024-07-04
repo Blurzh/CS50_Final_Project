@@ -168,7 +168,7 @@ class Beer():
 
 
 # Tengo que tener cuidado con esta funcion. Recibe una beer con nombre y tipo, y con ello tiene que hacer un .csv
-def save_recipe_csv(beer):
+def save_recipe_csv(beer, list_to_save):
     try:
         recipe_name = beer.name + " (" + beer.beer_type + ").csv"
     except TypeError:
@@ -177,9 +177,8 @@ def save_recipe_csv(beer):
         writer = csv.writer(new_recipe)
         print(type(beer.ingredients))
         # problema. Sorted_list se convierte en una list porque el metodo .ingredients vuelve a ser llamado
-        sorted_list = list(beer.ingredients)
-        print(type(sorted_list))
-        for _ in sorted_list:
+        print(type(list_to_save))
+        for _ in list_to_save:
             writer.writerow(_)
 
 
@@ -198,7 +197,7 @@ def show_all_csv_available():
     csv_files = list(filter(lambda f: f.endswith('.csv'), all_files))
     print("\nExisting recipes:\n")
     for _ in csv_files:
-        print(_)
+        print(_[:-4])
 
 # Esta función necesita ser pulida mucho mucho mas
 def menu():
@@ -212,10 +211,10 @@ def menu():
             option = input("--------- Menu ---------\n\nOptions:\n\n1.- Create recipe\n2.- Save Recipe\n3.- See existing recipes\n4.- See recipe's ingredients\n5.- Follow recipe\n0.- Exit program\n\nOption: ")
         if option == "1":
             beer = Beer()
-            beer.ingredients()
+            list_to_save = beer.ingredients()
         elif option == "2":
             try:
-                save_recipe_csv(beer)
+                save_recipe_csv(beer, list_to_save)
             except:
                 fail = "\nImpossible to create the recipe, since none was entered. If you want to save one, please, select option '1.- Create Recipe'\n"
         elif option == "3":
