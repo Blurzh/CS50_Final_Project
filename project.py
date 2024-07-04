@@ -160,11 +160,12 @@ class Beer():
         return sorted_ingredients
 
 
-    def show_recipe(self, ingredients):
-        os.system('cls||clear')
-        print("--------- Brewing recipe ---------\n\n")
-        print(f"For brewing a {self.name} ({self.beer_type} type of beer), you will need:\n")
-        print(tabulate(ingredients, headers = "firstrow", tablefmt = "fancy_grid"))
+def show_recipe(ingredients, name_and_type):
+    os.system('cls||clear')
+    name, beer_type = name_and_type[:-1].split(sep=' (')
+    print("--------- Brewing recipe ---------\n\n")
+    print(f"For brewing a {name} ({beer_type} type of beer), you will need:\n")
+    print(tabulate(ingredients, headers = "firstrow", tablefmt = "fancy_grid"))
 
 
 # Tengo que tener cuidado con esta funcion. Recibe una beer con nombre y tipo, y con ello tiene que hacer un .csv
@@ -199,6 +200,17 @@ def show_all_csv_available():
     for _ in csv_files:
         print(_[:-4])
 
+def choosing_recipe():
+    all_files = os.listdir("/home/sergio/Projects/CS50_Final_Project")
+    csv_files = list(filter(lambda f: f.endswith('.csv'), all_files))
+    saved_recipes= {}
+    for _ in range(len(csv_files)):
+        saved_recipes[_] = csv_files[_]
+        print(f"{_+1}.- {saved_recipes[_][:-4]}")
+    option = input("Which beer would you like to check? ")
+    option = saved_recipes[int(option)-1]
+    return option
+
 # Esta función necesita ser pulida mucho mucho mas
 def menu():
     option = -1
@@ -221,12 +233,12 @@ def menu():
             show_all_csv_available()
         elif option == "4":
             # Muestra las recetas existentes, selecionas una y te la muestra
-            beer.show_recipe("-----------tengo que pasar una lista de ingredientes--------------")
+            # Muestra un dict con con las recetas.
+            name = choosing_recipe()
+            ingredients = open_recipe(name)
+            show_recipe(ingredients, name)
         #elif option == "5":
             # Aqui viene una funcion aun por definir ("follow_recipe")
-
-
-
 
 
 def main():
