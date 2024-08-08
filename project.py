@@ -10,13 +10,14 @@ from tabulate import tabulate
 import csv
 
 
-def sorting_quantity(item):
-        quantity = item[2]
-        num, measure = quantity.split()
-        num = float(num)
-        if measure.lower() == "kg":
-            num *= 1000
-        return num
+
+
+
+# Implementar inputs de name y beer_type al comienzo de la clase y liberar el inicio del metodo ingredients
+
+
+
+
 
 class Beer():
     def __init__(self, name = None, beer_type = None) -> None:
@@ -47,8 +48,10 @@ class Beer():
         self._beer_type = value
 
     
+    # Revisar el metodo. Han salido ya 2 recetas con espacios en blanco que afean la tabla de la Option 4 a topew
+
     def ingredients(self):
-        #os.system('cls||clear')
+        os.system('cls||clear')
         possible_ing = ["Malt", "Yiest", "Hops"]
         print("--------- Introducing ingredients ---------\n\n")
         ingredients = []
@@ -63,7 +66,7 @@ class Beer():
             ing_info = ["", "", "", ""]
             while not self.name:
                 self.name = input("Name of the beer: ").capitalize()
-                right_name = re.search(f"^[a-zA-Z0-9 '-ºª]*$", self.name)
+                right_name = re.search(r"^[a-zA-Z0-9 '-ºª]*$", self.name)
                 try:
                     if not right_name:
                         raise ValueError("Invalid name. Try a different one.")
@@ -76,19 +79,19 @@ class Beer():
 
             while not self.beer_type:
                 self.beer_type = input("Type of the beer: ").capitalize()
-                right_name = re.search(f"^[a-zA-Z' -]*$", self.beer_type)
+                right_name = re.search(r"^[a-zA-Z' -]*$", self.beer_type)
                 try:
                     if not right_name:
                         raise ValueError("\nInvalid name. Try a different one.")
                 except ValueError as e:
                     os.system('cls||clear')
                     print("--------- Introducing ingredients ---------\n\n")
-                    print(f"Name of the beer: {self.name}")
+                    print(f"Name of the beer: {self.name}\n")
                     print(e)
                     self.beer_type = None
 
             
-            #os.system('cls||clear')
+            os.system('cls||clear')
             print("--------- Introducing ingredients ---------")
             print(f"\n\nName of the beer: {self.name}")
             print(f"Type of the beer: {self.beer_type}")
@@ -114,13 +117,9 @@ class Beer():
                         print("Incorrect quantity. You have to provide a number and a measure (e.g. 1 Kg, 20 g). Try again.")
                     ing_info[2] = input("Quantity (please, specify in g or kg): ").lower()
                     
-                    match = re.search("^(\d*)? (g|gr|kg|Kg)?$", ing_info[2])
+                    match = re.search(r"^(\d*.?\d*?) (g|gr|kg)$", ing_info[2])
                     if not match:
-                        raise ValueError("Incorrect quantity. You have to provide a number and a measure (e.g. 1 Kg, 20 g). Try again.")
-                    if not match.group(1).isnumeric():
-                        raise ValueError("Quantity must be a number.")
-                    if match.group(2) not in ["g", "gr", "kg", "Kg", "KG"]:
-                        raise ValueError("Invalid measure. Choose from g, gr, kg, Kg.")
+                        raise ValueError("Incorrect quantity. You have to provide a number and a measure (e.g. 1 kg, 20 g). Try again.")
                     valid_quantity = True
                 except ValueError as e:
                     print(e)
@@ -147,7 +146,7 @@ class Beer():
                 ing_info[3] = "After cooling the mixture"
 
             ingredients.append(ing_info)
-            a = ""
+            # a = ""
             checker = input("\nDo you want to add another one? Y or N: ")
             if checker.upper() == "N":
                 done = True
@@ -160,12 +159,22 @@ class Beer():
         return sorted_ingredients
 
 
+def sorting_quantity(item):
+        quantity = item[2]
+        num, measure = quantity.split()
+        num = float(num)
+        if measure.lower() == "kg":
+            num *= 1000
+        return num
+
+
 def show_recipe(ingredients, name_and_type):
     os.system('cls||clear')
     name, beer_type = name_and_type[:-5].split(sep=' (')
     print("--------- Brewing recipe ---------\n\n")
     print(f"For brewing a {name} ({beer_type} type of beer), you will need:\n")
     print(tabulate(ingredients, headers = "firstrow", tablefmt = "fancy_grid"))
+    refresh_screen = input("\n\nEnter any key to close this recipe: ")
 
 
 # Tengo que tener cuidado con esta funcion. Recibe una beer con nombre y tipo, y con ello tiene que hacer un .csv
@@ -174,7 +183,7 @@ def save_recipe_csv(beer, list_to_save):
         recipe_name = beer.name + " (" + beer.beer_type + ").csv"
     except TypeError:
         return "\nImpossible to create the recipe, since none was entered. If you want to save one, please, select option '1.- Create Recipe'"
-    with open(recipe_name, 'w') as new_recipe:
+    with open(recipe_name, 'w', newline='') as new_recipe:
         writer = csv.writer(new_recipe)
         for _ in list_to_save:
             writer.writerow(_)
@@ -191,56 +200,60 @@ def open_recipe(option):
 
 # Esta función va a ser problematica ya que tiene el path de mi carpeta del pc, no la del repositorio de GitHub en si
 def show_all_csv_available():
-    all_files = os.listdir("/home/sergio/Projects/CS50_Final_Project")    
+    os.system('cls||clear')
+    current_directory = os.path.dirname(os.path.abspath(__file__))
+    all_files = os.listdir(current_directory)    
     csv_files = list(filter(lambda f: f.endswith('.csv'), all_files))
-    print("\nExisting recipes:\n")
-    for _ in csv_files:
-        print(_[:-4])
+    print("Existing recipes:\n")
+    for _ in range(len(csv_files)):
+        print(f"{_+1}.- {csv_files[_][:-4]}")
+    return csv_files
+
 
 def choosing_recipe():
-    all_files = os.listdir("/home/sergio/Projects/CS50_Final_Project")
-    csv_files = list(filter(lambda f: f.endswith('.csv'), all_files))
-    saved_recipes= {}
-    for _ in range(len(csv_files)):
-        saved_recipes[_] = csv_files[_]
-        print(f"{_+1}.- {saved_recipes[_][:-4]}")
-    option = input("Which beer would you like to check? ")
+    csv_files = show_all_csv_available()
+    option = input("\nWhich beer would you like to check? ")
     try:
-        option = saved_recipes[int(option)-1]
-    except KeyError:
-        option = "That's not an available recipe. Please, select a new option"
+        option = csv_files[int(option)-1]
+    except IndexError:
+        option = "That's not an available recipe. Please, select a new option\n\n"
     return option
+
 
 # Esta función necesita ser pulida mucho mucho mas
 def menu():
     option = -1
     fail = ""
     while option != "0":
-        # Puedo hacer un menu mas bonito con Tabulate (no sé, piénsalo)
-        if fail:
-            option = input("--------- Menu ---------\n\nOptions:\n\n1.- Create recipe\n2.- Save Recipe\n3.- See existing recipes\n4.- See recipe's ingredients\n5.- Follow recipe\n0.- Exit program\n\n" + fail +"\n\nOption: ")
-            fail = ""
-        else:
-            option = input("--------- Menu ---------\n\nOptions:\n\n1.- Create recipe\n2.- Save Recipe\n3.- See existing recipes\n4.- See recipe's ingredients\n5.- Follow recipe\n0.- Exit program\n\nOption: ")
+        os.system('cls||clear')
+        # Puedes hacer un menu mas bonito con Tabulate (no sé, piénsalo)
+
+        # Cuando printea algo y vuelve al menu borra lo que ha escrito. Hay que solucionar eso
+
+        option = input("--------- Menu ---------\n\nOptions:\n\n1.- Create recipe\n2.- Save Recipe\n3.- See existing recipes\n4.- See recipe's ingredients\n0.- Exit program\n\n" + fail +"\n\nOption: ")
+        fail = ""
         if option == "1":
             beer = Beer()
             list_to_save = beer.ingredients()
         elif option == "2":
             try:
+                for _ in list_to_save:
+                    print(_)
                 save_recipe_csv(beer, list_to_save)
             except:
-                fail = "Impossible to create the recipe, since none was entered. If you want to save one, please, select option '1.- Create Recipe'"
+                fail = "Impossible to create the recipe, since none was entered. If you want to save one, please, select option '1.- Create Recipe'\n\n"
         elif option == "3":
             show_all_csv_available()
+            refresh_screen = input("\n\nEnter any key to get back to the menu: ")
         elif option == "4":
             name = choosing_recipe()
-            if name == "That's not an available recipe. Please, select a new option":
+            if name == "That's not an available recipe. Please, select a new option\n\n":
                 fail = name
             else:
                 ingredients = open_recipe(name)
                 show_recipe(ingredients, name)
-        #elif option == "5":
-            # Aqui viene una funcion aun por definir ("follow_recipe")
+        else:
+            fail = "That option doesn't exists. Please, select one shown above."
 
 
 def main():
