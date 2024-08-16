@@ -10,15 +10,6 @@ from tabulate import tabulate
 import csv
 
 
-
-
-
-# Implementar inputs de name y beer_type al comienzo de la clase y liberar el inicio del metodo ingredients
-
-
-
-
-
 class Beer():
     def __init__(self, name = None, beer_type = None) -> None:
         self._name = name
@@ -49,7 +40,6 @@ class Beer():
     def input_name(self):
         os.system('cls||clear')
         print("--------- Introducing ingredients ---------\n\n")
-        self_name = None
         while True:
             try:
                 name = input("Name of the beer: ").capitalize()
@@ -88,10 +78,6 @@ class Beer():
             except ValueError as e:
                 print(e)
                 continue
-
-
-
-    # Revisar el metodo. Han salido ya 2 recetas con espacios en blanco que afean la tabla de la Option 4 a topew
 
     def ingredients(self):
         os.system('cls||clear')
@@ -163,7 +149,6 @@ class Beer():
                 ing_info[3] = "After cooling the mixture"
 
             ingredients.append(ing_info)
-            # a = ""
             checker = input("\nDo you want to add another one? Y or N: ")
             if checker.upper() == "N":
                 done = True
@@ -175,7 +160,6 @@ class Beer():
             sorted_ingredients.append(ingredients[_])
         return sorted_ingredients
 
-
 def sorting_quantity(item):
         quantity = item[2]
         num, measure = quantity.split()
@@ -183,7 +167,6 @@ def sorting_quantity(item):
         if measure.lower() == "kg":
             num *= 1000
         return num
-
 
 def show_recipe(ingredients, name_and_type):
     os.system('cls||clear')
@@ -193,8 +176,6 @@ def show_recipe(ingredients, name_and_type):
     print(tabulate(ingredients, headers = "firstrow", tablefmt = "fancy_grid"))
     refresh_screen = input("\n\nEnter any key to close this recipe: ")
 
-
-# Tengo que tener cuidado con esta funcion. Recibe una beer con nombre y tipo, y con ello tiene que hacer un .csv
 def save_recipe_csv(beer, list_to_save):
     try:
         recipe_name = beer.name + " (" + beer.beer_type + ").csv"
@@ -205,7 +186,6 @@ def save_recipe_csv(beer, list_to_save):
         for _ in list_to_save:
             writer.writerow(_)
 
-
 def open_recipe(option):
     with open(option) as file:
         recipe_to_open = file.readlines()
@@ -214,8 +194,6 @@ def open_recipe(option):
         aux_dict.append(recipe_to_open[_].split(sep=','))
     return aux_dict
 
-
-# Esta función va a ser problematica ya que tiene el path de mi carpeta del pc, no la del repositorio de GitHub en si
 def show_all_csv_available():
     os.system('cls||clear')
     current_directory = os.path.dirname(os.path.abspath(__file__))
@@ -226,7 +204,6 @@ def show_all_csv_available():
         print(f"{_+1}.- {csv_files[_][:-4]}")
     return csv_files
 
-
 def choosing_recipe():
     csv_files = show_all_csv_available()
     option = input("\nWhich beer would you like to check? ")
@@ -236,16 +213,12 @@ def choosing_recipe():
         option = "That's not an available recipe. Please, select a new option\n\n"
     return option
 
-
-# Esta función necesita ser pulida mucho mucho mas
 def menu(option = None):
     fail = ""
     if option == None:
         option = -1
     while option != "0":
         os.system('cls||clear')
-        # Puedes hacer un menu mas bonito con Tabulate (no sé, piénsalo)
-
         option = input("--------- Menu ---------\n\nOptions:\n\n1.- Create recipe\n2.- Save Recipe\n3.- See existing recipes\n4.- See recipe's ingredients\n0.- Exit program\n\n" + fail +"\n\nOption: ")
         fail = ""
         if option == "1":
