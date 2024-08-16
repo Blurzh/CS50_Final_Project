@@ -1,0 +1,2 @@
+Tabulate -> pip install tabulate
+CSV -> pip install python-csv
