@@ -4,9 +4,7 @@ When we enter the program we'll see the menu with all the option the user can go
 
 Option 1: Create a recipe.
     Here a Beer() instance will be created.
-    The user is prompted for a name, a beer type and will get into a loop where a list of ingredients will be loaded. Name have absolute freedom, while 'Ingredient, 'Quantity' and 
-    'When to be added' have to follow specific easy rules given when entering them. After entering all information about one ingredient, the user will be asked if the loop should be
-    repeated for adding another ingredient for the recipe or stop it and get back to the menu.
+    The user is prompted for a name, a beer type and will get into a loop where a list of ingredients will be loaded. Name and Type are flexible, while 'Ingredient, 'Quantity' and 'When to be added' have to follow specific strong but easy rules given when entering them. After entering all information about one ingredient, the user will be asked if the loop should be repeated for adding another ingredient for the recipe or stop it and get back to the menu.
 
 Option 2: Save recipe.
     The recipe introduced in Option 1 will be saved in a text file with name "Name (Type).csv". If the user didn't entered any recipe with Option 1, an error message will be prompted allowing the user to know the impossibility to save something that doesn't exist.
