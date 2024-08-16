@@ -29,25 +29,68 @@ class Beer():
     def __str__(self) -> str:
         return(f"{self.name} is a {self.beer_type}")
 
+    def is_valid_name(self, name):
+        right_name = re.search(r"^[a-zA-Z0-9 '-ºª]*$", name)
+        return bool(right_name)
 
     @property
     def name(self):
         return self._name
     
     @name.setter
-    def name(self, value):
-        self._name = value
+    def name(self, name):
+        if self.is_valid_name(name):
+            self._name = name
+        else:
+            os.system('cls||clear')
+            print("--------- Introducing ingredients ---------\n\n")
+            raise ValueError("Invalid name. Try a different one.\n")
 
+    def input_name(self):
+        os.system('cls||clear')
+        print("--------- Introducing ingredients ---------\n\n")
+        self_name = None
+        while True:
+            try:
+                name = input("Name of the beer: ").capitalize()
+                self.name = name
+                break
+            except ValueError as e:
+                print(e)
+                continue
+
+    def is_valid_type(self, type):
+        right_type = re.search(r"^[a-zA-Z' -]*$", type)
+        return bool(right_type)
 
     @property
     def beer_type(self):
         return self._beer_type
 
     @beer_type.setter
-    def beer_type(self, value):
-        self._beer_type = value
+    def beer_type(self, type):
+        if self.is_valid_type(type):
+            self._beer_type = type
+        else:
+            os.system('cls||clear')
+            print("--------- Introducing ingredients ---------\n\n")
+            print(f"Name of the beer: {self.name}\n")
+            raise ValueError("Invalid type. Try a different one.\n")
 
-    
+    def input_type(self):
+        os.system('cls||clear')
+        print("--------- Introducing ingredients ---------\n\n")
+        while True:
+            try:
+                type = input("Type of the beer: ").capitalize()
+                self.beer_type = type
+                break
+            except ValueError as e:
+                print(e)
+                continue
+
+
+
     # Revisar el metodo. Han salido ya 2 recetas con espacios en blanco que afean la tabla de la Option 4 a topew
 
     def ingredients(self):
@@ -59,37 +102,11 @@ class Beer():
                     "2. Mid Boil": "Middle of the boil",
                     "3. Late Boil": "Last 10-15 minutes",
                     "4. Flameout": "Immediately after turning off heat",
-                    "5. Whirlpool": "During cooling, while stirring",
-                    "6. Dry Hopping": "During fermentation, before bottling"}
+                    "5. Whirlpool": "During cooling while stirring",
+                    "6. Dry Hopping": "During fermentation before bottling"}
         done = False
         while not done:
             ing_info = ["", "", "", ""]
-            while not self.name:
-                self.name = input("Name of the beer: ").capitalize()
-                right_name = re.search(r"^[a-zA-Z0-9 '-ºª]*$", self.name)
-                try:
-                    if not right_name:
-                        raise ValueError("Invalid name. Try a different one.")
-                except ValueError as e:
-                    os.system('cls||clear')
-                    print("--------- Introducing ingredients ---------\n\n")
-                    print(e)
-                    self.name = None
-            
-
-            while not self.beer_type:
-                self.beer_type = input("Type of the beer: ").capitalize()
-                right_name = re.search(r"^[a-zA-Z' -]*$", self.beer_type)
-                try:
-                    if not right_name:
-                        raise ValueError("\nInvalid name. Try a different one.")
-                except ValueError as e:
-                    os.system('cls||clear')
-                    print("--------- Introducing ingredients ---------\n\n")
-                    print(f"Name of the beer: {self.name}\n")
-                    print(e)
-                    self.beer_type = None
-
             
             os.system('cls||clear')
             print("--------- Introducing ingredients ---------")
@@ -221,19 +238,20 @@ def choosing_recipe():
 
 
 # Esta función necesita ser pulida mucho mucho mas
-def menu():
-    option = -1
+def menu(option = None):
     fail = ""
+    if option == None:
+        option = -1
     while option != "0":
         os.system('cls||clear')
         # Puedes hacer un menu mas bonito con Tabulate (no sé, piénsalo)
-
-        # Cuando printea algo y vuelve al menu borra lo que ha escrito. Hay que solucionar eso
 
         option = input("--------- Menu ---------\n\nOptions:\n\n1.- Create recipe\n2.- Save Recipe\n3.- See existing recipes\n4.- See recipe's ingredients\n0.- Exit program\n\n" + fail +"\n\nOption: ")
         fail = ""
         if option == "1":
             beer = Beer()
+            beer.input_name()
+            beer.input_type()
             list_to_save = beer.ingredients()
         elif option == "2":
             try:
@@ -241,7 +259,7 @@ def menu():
                     print(_)
                 save_recipe_csv(beer, list_to_save)
             except:
-                fail = "Impossible to create the recipe, since none was entered. If you want to save one, please, select option '1.- Create Recipe'\n\n"
+                fail = "Impossible to create the recipe, since none was entered. If you want to save one, please, select option '1.- Create Recipe'"
         elif option == "3":
             show_all_csv_available()
             refresh_screen = input("\n\nEnter any key to get back to the menu: ")
@@ -253,8 +271,10 @@ def menu():
                 ingredients = open_recipe(name)
                 show_recipe(ingredients, name)
         else:
-            fail = "That option doesn't exists. Please, select one shown above."
+            fail = "That option doesn't exist. Please, select one shown above."
 
+        if option == '0':
+            return fail
 
 def main():
     os.system('cls||clear')
