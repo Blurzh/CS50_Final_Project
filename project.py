@@ -70,6 +70,7 @@ class Beer():
     def input_type(self):
         os.system('cls||clear')
         print("--------- Introducing ingredients ---------\n\n")
+        print(f"Name of the beer: {self.name}")
         while True:
             try:
                 type = input("Type of the beer: ").capitalize()
@@ -88,8 +89,8 @@ class Beer():
                     "2. Mid Boil": "Middle of the boil",
                     "3. Late Boil": "Last 10-15 minutes",
                     "4. Flameout": "Immediately after turning off heat",
-                    "5. Whirlpool": "During cooling while stirring",
-                    "6. Dry Hopping": "During fermentation before bottling"}
+                    "5. Whirlpool": "During cooling; while stirring",
+                    "6. Dry Hopping": "During fermentation; before bottling"}
         done = False
         while not done:
             ing_info = ["", "", "", ""]
