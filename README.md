@@ -1,5 +1,5 @@
 # Beer recipe book
-### Video demo: 
+### Video demo: https://www.youtube.com/watch?v=hsy5ESDcwqM
 ### Description: 
 
 Here we have a basic beer recipe book.
