@@ -1,4 +1,8 @@
-Here we have a basic beer recipe's book.
+# Beer recipe book
+### Video demo: 
+### Description: 
+
+Here we have a basic beer recipe book.
 
 When we enter the program we'll see the menu with all the option the user can go through.
 
