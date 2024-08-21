@@ -1,14 +1,11 @@
 # Para limpiar la pantalla
 import os
-# Para parar el programa
-import sys
 # Para cazar los grupos cuando el usuario mete las cantidades
 import re
 # Para dibujar las tablas
 from tabulate import tabulate
 # Para abrir, modificar y guardar archivos csv
 import csv
-
 
 class Beer():
     def __init__(self, name = None, beer_type = None) -> None:
